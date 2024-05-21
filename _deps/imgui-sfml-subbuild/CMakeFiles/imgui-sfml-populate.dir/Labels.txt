@@ -1,0 +1,14 @@
+# Target labels
+ imgui-sfml-populate
+# Source files and their labels
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/imgui-sfml-populate
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/b49833ff9d6d3df198029f07785650ed/imgui-sfml-populate.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/d6de307395b9ef5337ac1f4358bb2b43/imgui-sfml-populate-complete.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-build.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-configure.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-download.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-install.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-mkdir.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-patch.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-test.rule
+C:/Users/admin/Desktop/building/build/_deps/imgui-sfml-subbuild/CMakeFiles/f331015fe7ace67750e9716ed406219b/imgui-sfml-populate-update.rule

@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/imgui-populate"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8d6d8319ade4acfaeef0808afc45f127/imgui-populate.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/06daad98b2686d5afe8b665da8549618/imgui-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/admin/Desktop/building/build/_deps/imgui-subbuild/CMakeFiles/8179aba87f6bf1b71d434823a109a5fe/imgui-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"imgui-populate"
+		],
+		"name" : "imgui-populate"
+	}
+}
