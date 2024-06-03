@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game2dSFML", "game2dSFML.vcxproj", "{8649835B-21BD-4F2E-A50D-01112BC51699}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{40121119-D2AD-4119-829B-D8D0F771BAA3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcxproj", "{EB900891-12E2-469B-A7ED-6FE5A81BD003}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ENJINE_shared", "ENJINE_shared\ENJINE_shared.vcxitems", "{0E6CA349-C9FD-44B4-8CE8-CD04BD58364F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,19 +17,32 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Debug|x64.ActiveCfg = Debug|x64
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Debug|x64.Build.0 = Debug|x64
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Debug|x86.ActiveCfg = Debug|Win32
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Debug|x86.Build.0 = Debug|Win32
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Release|x64.ActiveCfg = Release|x64
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Release|x64.Build.0 = Release|x64
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Release|x86.ActiveCfg = Release|Win32
-		{8649835B-21BD-4F2E-A50D-01112BC51699}.Release|x86.Build.0 = Release|Win32
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Debug|x64.ActiveCfg = Debug|x64
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Debug|x64.Build.0 = Debug|x64
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Debug|x86.ActiveCfg = Debug|Win32
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Debug|x86.Build.0 = Debug|Win32
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Release|x64.ActiveCfg = Release|x64
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Release|x64.Build.0 = Release|x64
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Release|x86.ActiveCfg = Release|Win32
+		{40121119-D2AD-4119-829B-D8D0F771BAA3}.Release|x86.Build.0 = Release|Win32
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Debug|x64.ActiveCfg = Debug|x64
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Debug|x64.Build.0 = Debug|x64
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Debug|x86.ActiveCfg = Debug|Win32
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Debug|x86.Build.0 = Debug|Win32
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Release|x64.ActiveCfg = Release|x64
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Release|x64.Build.0 = Release|x64
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Release|x86.ActiveCfg = Release|Win32
+		{EB900891-12E2-469B-A7ED-6FE5A81BD003}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A5356D2C-FF8E-40BA-BDBD-5F7D51F1DFC7}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		ENJINE_shared\ENJINE_shared.vcxitems*{0e6ca349-c9fd-44b4-8ce8-cd04bd58364f}*SharedItemsImports = 9
+		ENJINE_shared\ENJINE_shared.vcxitems*{40121119-d2ad-4119-829b-d8d0f771baa3}*SharedItemsImports = 4
+		ENJINE_shared\ENJINE_shared.vcxitems*{eb900891-12e2-469b-a7ed-6fe5a81bd003}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

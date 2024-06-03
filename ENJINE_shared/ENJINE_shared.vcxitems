@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{0e6ca349-c9fd-44b4-8ce8-cd04bd58364f}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)define.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)nodes\character_node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)nodes\node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tile.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tilemap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\vecmath.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)nodes\character_node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)nodes\node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tile.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tilemap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\vecmath.cpp" />
+  </ItemGroup>
+</Project>

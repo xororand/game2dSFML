@@ -1,36 +1,42 @@
-﻿#include "main.h"
-#include "game.h"
+﻿#include "client.h"
+#include "game/game.h"
 
 int main() {
-    setlocale(LC_ALL, "ru");
+    setlocale(LC_ALL, "RUS");
     IMGUI_CHECKVERSION();
 
     Clock deltaclock;
     gameloops loops;
 
     RenderWindow window(sf::VideoMode(loops.getScreenWidth(), loops.getScreenHeight()), "2D GAME", Style::Fullscreen);
-    //window.setFramerateLimit(60);
-    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(144);
+    //window.setVerticalSyncEnabled(true);
+
     ImGui::SFML::Init(window);
     loops.setMainWindow(&window);
     loops.setImguiIO(&ImGui::GetIO());
 
-    ImGui::GetIO().Fonts->Clear(); // clear fonts if you loaded some before (even if only default one was loaded)
-    // IO.Fonts->AddFontDefault(); // this will load default font as well
-    ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF("fonts/arial.ttf", 15.f, NULL,
+    ImGui::GetIO().Fonts->Clear();
+
+    ImFont* font = ImGui::GetIO().Fonts->AddFontFromFileTTF((current_path().string() + "/data/fonts/arialbd.ttf").c_str(), 15.f, NULL,
         ImGui::GetIO().Fonts->GetGlyphRangesCyrillic());
+
     loops.setStandartFont(font);
 
-    ImGui::SFML::UpdateFontTexture(); // important call: updates font texture
+    ImGui::SFML::UpdateFontTexture();
 
     Clock deltaClock;
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
-           ImGui::SFML::ProcessEvent(event);
+            ImGui::SFML::ProcessEvent(event);
 
             if (event.type == sf::Event::Closed) {
                 window.close();
+            }
+            else if (event.type == sf::Event::Resized) {
+                loops.setScreenHeight(event.size.height);
+                loops.setScreenWidth(event.size.width);
             }
         }
 
@@ -38,10 +44,11 @@ int main() {
 
         ImGui::SFML::Update(window, deltaClock.restart());
 
-        //ImGui::ShowDemoWindow();
+        window.clear(Color(10.0, 10.0, 10.0));
 
-        window.clear();
         loops.render(deltaTime);
+        loops.keyboard(deltaTime);
+
         ImGui::SFML::UpdateFontTexture();
         ImGui::SFML::Render(window);
         window.display();
