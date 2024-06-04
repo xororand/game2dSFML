@@ -10,7 +10,7 @@ int main() {
 
     RenderWindow window(sf::VideoMode(loops.getScreenWidth(), loops.getScreenHeight()), "2D GAME", Style::Fullscreen);
     window.setFramerateLimit(144);
-    //window.setVerticalSyncEnabled(true);
+    window.setVerticalSyncEnabled(true);
 
     ImGui::SFML::Init(window);
     loops.setMainWindow(&window);

@@ -24,10 +24,10 @@ public:
 	ImGuiIO* io;
 	
 private:
-	enum class UI {
+	enum class SCENE {
 		main_menu,
 		main_settings,
-		game_server
+		connection_process_game_server,
 	};
 
 	struct m_settings {
@@ -43,7 +43,7 @@ private:
 		static inline float fps_samples[500];
 	};
 
-	UI current_ui = UI::game_server;
+	SCENE current_ui = SCENE::main_menu;
 	vecmath vmath;
 	RenderWindow* window;
 	Clock clock_space;
@@ -64,15 +64,17 @@ private:
 
 	void write2draw_all_characters();
 	void clean_all_tiles();
-
-	void drawMenu(float& deltatime);
-
-	void drawDebug();
+	
 	void drawMainMenu(float& deltatime);
 	void drawMainSettings(float& deltatime);
+	void drawConnectionProcessGameServer(float& deltatime);
 	void drawGameServer(float& deltatime);
+
+
+	void drawDebug();
 	void drawRandomComets(float& deltatime);
-	void drawBackgroundSpace(float& deltatime);
+	void drawBackgroundSpaceCircleEffect(float& deltatime);
+	void drawBackgroundSpaceFlyEffect(float& deltatime);
 	void drawCredits();
 
 	

@@ -23,6 +23,12 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\vecmath.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui-SFML.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_demo.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_draw.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_tables.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_widgets.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)nodes\character_node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)nodes\node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tile.cpp" />

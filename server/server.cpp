@@ -1,16 +1,26 @@
 ﻿#include "server.h"
 
-server m_server = server();
+server m_server;
 
 int main() {
+    setlocale(LC_ALL, "ru-RU");
+    
     while (m_server.is_started()) {
         m_server.accept_connections();
     }
 }
 
 server::server() {
-    if (tcp_listener.listen(DEFAULT_TCP_SERVER_PORT) != Socket::Done)
+    
+    cout << "Starting OUR GREATE server..." << endl;
+    
+
+    if (tcp_listener.listen(DEFAULT_TCP_SERVER_PORT) != Socket::Done) {
+        cout << "Server is NOT STARTED" << endl;
         return;
+    }
+
+    cout << "Server is STARTED on port "<< tcp_listener.getLocalPort() << endl;
 
     m_is_started = true;
 }

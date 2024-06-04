@@ -69,6 +69,7 @@ gameloops::gameloops() {
     m_settings::space_points = VertexArray(Points, m_settings::space_points_count);
     toview_center = Vector2f(screen_weight / 2, screen_height / 2);
     view_center = toview_center;
+
     for (int i = 0; i < m_settings::space_points_count; i++) {
         m_settings::space_points[i].position = Vector2f(rand() % screen_weight, rand() % screen_height);
     }
@@ -123,18 +124,23 @@ void gameloops::drawDebug() {
     ImGui::PopFont();
 }
 void gameloops::drawMainMenu(float& deltatime) {
-    drawBackgroundSpace(deltatime);
+    drawBackgroundSpaceCircleEffect(deltatime);
 
     ImGui::PushFont(getStandartFont());
 
     ImGui::SetNextWindowSize(ImVec2(screen_weight / 3.84f, screen_height / 2.16f));
-    ImGui::SetNextWindowPos(ImVec2(screen_weight / 2 - (screen_weight / 3.84f) / 2, screen_height / 2 - (screen_height / 2.16f) / 2));
-    ImGui::Begin(u8"mMain", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);//
+    ImGui::SetNextWindowPos(ImVec2(screen_weight / 2 - (screen_weight / 3.84f) / 2, screen_height / 2 - (screen_height / 2.16f) / 5));
+    ImGui::Begin(u8"mMain", NULL, UI_FLAG_CLEAR);//
 
-    ImGui::Button(u8"Âõîä", ImVec2(250, 50));
-    if (ImGui::Button(u8"Íàñòğîéêè", ImVec2(250, 50))) {
-        current_ui = UI::main_settings;
+    ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
+    if (ImGui::Button(u8"Âõîä", ImVec2(250, 50))) {
+        current_ui = SCENE::connection_process_game_server;
     }
+    ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
+    if (ImGui::Button(u8"Íàñòğîéêè", ImVec2(250, 50))) {
+        current_ui = SCENE::main_settings;
+    }
+    ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
     if (ImGui::Button(u8"Âûõîä", ImVec2(250, 50))) {
         exit(0);
     }
@@ -144,7 +150,7 @@ void gameloops::drawMainMenu(float& deltatime) {
     
 }
 void gameloops::drawMainSettings(float& deltatime) {
-    drawBackgroundSpace(deltatime);
+    drawBackgroundSpaceCircleEffect(deltatime);
 
     ImGui::PushFont(getStandartFont());
 
@@ -160,6 +166,9 @@ void gameloops::drawMainSettings(float& deltatime) {
 
     ImGui::End();
     ImGui::PopFont();
+}
+void gameloops::drawConnectionProcessGameServer(float& deltatime) {
+    drawBackgroundSpaceFlyEffect(deltatime);
 }
 void gameloops::drawGameServer(float& deltatime) {
     drawRandomComets(deltatime);
@@ -180,7 +189,7 @@ void gameloops::drawGameServer(float& deltatime) {
 void gameloops::drawRandomComets(float& deltatime) {
     // TODO: êîìåíòû ïğîëåòàşùèå íà ôîíå, ÷èñòî BackGround â êîñìîñå
 }
-void gameloops::drawBackgroundSpace(float& deltatime) {
+void gameloops::drawBackgroundSpaceCircleEffect(float& deltatime) {
     float max = 0.0f;
     // öèêë àíèìàöèè äëÿ êàæäîãî ïèêñåëÿ
     for (int i = 0; i < m_settings::space_points_count; i++) {
@@ -189,7 +198,7 @@ void gameloops::drawBackgroundSpace(float& deltatime) {
 
         float rad_delta = i / m_settings::space_points_count;
 
-        double angle = (.0015 * (rad_delta - 1.0 + 0.5)) * (1.0f / io->Framerate) * 100.0f;
+        double angle = (.0015 * (rad_delta - 1.0 + 0.5));
 
 
         float dist_tocenter = vecmath::distance(Vector2f(screen_weight / 2, screen_height / 2), m_settings::space_points[i].position);
@@ -215,60 +224,92 @@ void gameloops::drawBackgroundSpace(float& deltatime) {
     window->setView(view);
     window->draw(m_settings::space_points);
 }
-void gameloops::drawMenu(float& deltatime) {
-    switch (current_ui) {
-        case UI::main_menu:
-            drawMainMenu(deltatime);
-            break;
-        case UI::main_settings:
-            drawMainSettings(deltatime);
-            break;
-        case UI::game_server:
-            drawGameServer(deltatime);
-            break;
+void gameloops::drawBackgroundSpaceFlyEffect(float& deltatime) {
+    float max = 0.0f;
+    // öèêë àíèìàöèè äëÿ êàæäîãî ïèêñåëÿ
+    for (int i = 0; i < m_settings::space_points_count; i++) {
+        if (m_settings::space_points[i].position.x <= 0) {
+            m_settings::space_points[i].position.x = screen_weight;
+            m_settings::space_points[i].position.x += rand() % 100;
+
+            m_settings::space_points[i].position.y = rand() % screen_height;
+        }
+        m_settings::space_points[i].position.y += cosf(ImGui::GetTime()) * 0.2f;
+        m_settings::space_points[i].position.x -= 100.0f * deltatime;
     }
+
+    sf::View view = window->getDefaultView();
+    view.zoom(0.5f - cosf(ImGui::GetTime()) * 0.02f);
+
+    string connect_text = u8"ÈÄÅÒ ÏÎÄÊËŞ×ÅÍÈÅ";
+    float text_size = ImGui::CalcTextSize(connect_text.c_str()).x / 2;
+    float coef_point = clamp(abs(cosf(ImGui::GetTime())), 0.0f, 1.0f);
     
+    if (coef_point >= 0.7 && coef_point <= 1.0) {
+        connect_text += "...";
+    } else if (coef_point > 0.3 && coef_point < 0.7) {
+        connect_text += "..";
+    } else if (coef_point >= 0.0 && coef_point <= 0.3) {
+        connect_text += ".";
+    }
+
+    ImGui::Begin(u8"connection_progress", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
+    ImGui::SetWindowPos(ImVec2(screen_weight / 2 - text_size, screen_height / 2) );
+    ImGui::Text(connect_text.c_str(), CLIENT_VERSION, VERSION_STAGE);
+    ImGui::End();
+
+    window->setView(view);
+    window->draw(m_settings::space_points);
 }
+
 void gameloops::drawCredits() {
     ImGui::Begin(u8"credits", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
     ImGui::SetWindowPos(ImVec2(1, screen_height - 30));
-    ImGui::Text(u8"Â ĞÀÇĞÀÁÎÒÊÅ");
-
+    ImGui::Text(u8"Â ĞÀÇĞÀÁÎÒÊÅ %s %s", CLIENT_VERSION, VERSION_STAGE);
     ImGui::End();
 }
-
 
 // ÎÑÍÎÂÍÀß ÔÓÍÖÈß ÃÄÅ ÏĞÎÈÑÕÎÄÈÒ ÎÒĞÈÑÎÂÊÀ ÂÑÅÉ ÃĞÀÔÈÊÈ
 void gameloops::render(float& deltatime) {
     if (m_settings::is_debug)
         drawDebug();
 
-    drawMenu(deltatime);
-    drawCredits();
-    
+    switch (current_ui) {
+    case SCENE::main_menu:
+        drawMainMenu(deltatime);
+        break;
+    case SCENE::main_settings:
+        drawMainSettings(deltatime);
+        break;
+    case SCENE::connection_process_game_server:
+        drawConnectionProcessGameServer(deltatime);
+        break;
+    }
+
+    drawCredits(); 
 }
 
 // ÎÑÍÎÂÍÀß ÔÓÍÊÖÈß ÄËß ÎÁĞÀÁÎÒÊÈ ÂÑÅÕ ÊËÀÂÈØ
 void gameloops::keyboard(float& deltatime) {
-    if (ImGui::IsKeyReleased(Keyboard::F1))
+    if (ImGui::IsKeyReleased(ImGuiKey_F1))
         m_settings::is_debug = !m_settings::is_debug;
 
     main_player->get_vel()->x *= ANTI_VELOCITY;
     main_player->get_vel()->y *= ANTI_VELOCITY;
 
-    if (ImGui::IsKeyDown(Keyboard::W)) {
+    if (ImGui::IsKeyDown(ImGuiKey_W)) {
         main_player->get_vel()->y += -0.01;
         main_player->get_tile()->set_texture_id(4);
     } 
-    if (ImGui::IsKeyDown(Keyboard::S)) {
+    if (ImGui::IsKeyDown(ImGuiKey_S)) {
         main_player->get_vel()->y += 0.01;
         main_player->get_tile()->set_texture_id(1);
     } 
-    if (ImGui::IsKeyDown(Keyboard::D)) {
+    if (ImGui::IsKeyDown(ImGuiKey_D)) {
         main_player->get_vel()->x += 0.01;    
         main_player->get_tile()->set_texture_id(2);
     } 
-    if (ImGui::IsKeyDown(Keyboard::A)) {
+    if (ImGui::IsKeyDown(ImGuiKey_A)) {
         main_player->get_vel()->x += -0.01;
         main_player->get_tile()->set_texture_id(3);
     }

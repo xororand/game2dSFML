@@ -1,12 +1,12 @@
-#include "define.h"
+#define _CRT_SECURE_NO_WARNINGS
+#define NOMINMAX
 
-#include "Windows.h"
-#include <iostream>
+#include "define.h"
 
 #include "nodes/node.h"
 #include "nodes/character_node.h"
-
-using namespace std;
+#include <iostream>
+#include <string>
 
 class server {
 public:
@@ -15,7 +15,7 @@ public:
 	void accept_connections();
 private:
 	bool m_is_started = false;
-	
+	v2f global_pos;
 	TcpListener tcp_listener;
 	vector<TcpSocket> clients;
 	vector<character_node> m_characters;
