@@ -15,9 +15,25 @@ wstring utils::encoding::to_wide(const string& str)
     return wstr;
 }
 
-// ==================== ENCODING ====================
+// ==================== HASHING ====================
 
+string utils::hashing::sha256(string text) {
+    SHA256 sha;
+    sha.update(text);
+    std::array<uint8_t, 32> digest = sha.digest();
+    return SHA256::toString(digest);
+}
 
+// ==================== STRINGS ====================
+
+string utils::strings::get_rand_string(int c_count) {
+    srand(time(0));
+    string text = "";
+    for (int i = 0; i < c_count; i++) {
+        text += (char)rand() % 256;
+    }
+    return text;
+}
 
 // ==================== COMPUTER ====================
 
@@ -75,5 +91,3 @@ void utils::computer::getDesktopResolution(int& screen_weight, int& screen_heigh
     screen_weight = desktop.right;
     screen_height = desktop.bottom;
 }
-
-// ==================== COMPUTER ====================

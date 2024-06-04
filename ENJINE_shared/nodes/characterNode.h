@@ -1,9 +1,11 @@
+#pragma once
+
 #include "node.h"
 #include "tilemap/tile.h"
 
-class character_node : public node {
+class characterNode : public node {
 public:
-	character_node(v2f position);
+	characterNode(v2f position = v2f(0.0f, 0.0f));
 	tile* get_tile();
 	void set_pos(v2f pos);
 	void is_main(bool val);

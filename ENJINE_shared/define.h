@@ -2,6 +2,7 @@
 
 // ======== »√–Œ¬€≈ ƒ≈‘¿…Õ€ ======== //
 
+#define FIXED_DELTA (1.0f / 60.0f)
 #define STANDART_TILE_SIZE 64.0f, 64.0f
 #define ONE 1.0f
 #define MAX_VELOCITY 1.0f
@@ -13,14 +14,19 @@
 #define CLIENT_VERSION "0.1"
 #define SERVER_VERSION "0.1"
 
-#define DEFAULT_TCP_SERVER_PORT 7878
-#define DEFAULT_UDP_SERVER_PORT 7879
+#define DEFAULT_TCP_SERVER_PORT 7888
+#define DEFAULT_UDP_SERVER_PORT 7999
+#define CPU_THREADS_MAX_COUNT std::thread::hardware_concurrency()
 
+#include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Network.hpp"
 #include <imgui.h>
 #include <imgui-SFML.h>
 
+#include "utils/utils.h"
+
+#include <format>
 #include <filesystem>
 
 using namespace sf;

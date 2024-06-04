@@ -1,6 +1,5 @@
 #include "game.h"
 
-
 void gameloops::setMainWindow(RenderWindow* window_) {
     window = window_;
 }
@@ -24,7 +23,7 @@ void gameloops::setScreenHeight(float h) {
 }
 
 void gameloops::write2draw_all_characters() {
-    for (character_node* c : characters) {
+    for (characterNode* c : characters) {
         if (c->is_main()) {
             sf::View view = window->getDefaultView();
             view.setCenter(c->get_pos());
@@ -53,12 +52,12 @@ gameloops::gameloops() {
     render_system::_tilemap = tilemap(&render_system::atlas1, Vector2u(64, 64));
 
     // Á‡ÔËÒ¸ „Î‡‚ÌÓ„Ó ÔÂÒÓÌ‡Ê‡
-    main_player = new character_node(v2f(0.0, 0.0));
+    main_player = new characterNode(v2f(0.0, 0.0));
     main_player->is_main(true);
     main_player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
     main_player->get_tile()->set_texture_id(1);
 
-    character_node* player = new character_node(v2f(0.0, 0.0));
+    characterNode* player = new characterNode(v2f(0.0, 0.0));
     player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
     player->get_tile()->set_texture_id(1);
 
@@ -79,50 +78,6 @@ gameloops::gameloops() {
     }
 }
 
-void gameloops::drawDebug() {
-    ImGui::PushFont(getStandartFont());
-
-    ImGui::Begin(u8"ƒÂ·‡„ »Õ‘Œ", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
-    ImGui::SetWindowPos(ImVec2(0.0, 0.0));
-    //static float f = 0.0f;
-    //ImGui::SliderFloat("MAX FPS", &f, 0.0f, 144.0f);
-    //window->setFramerateLimit((int)f);
-
-
-    ImGui::Text("CPU:\t%s", utils::computer::getCpu().c_str());
-    ImGui::Text("GPU:\t%s", utils::encoding::to_utf8(utils::computer::getGpu()).c_str());
-    DWORD max, used;
-    utils::computer::getRAM(max, used);
-    ImGui::Text(u8"RAM:\t%i MB / %i%s Á‡„ÛÊÂÌÓ", max, used, "%");
-    ImVec2 m_vec = io->MousePos;
-
-
-    float ms = 1000.0f / io->Framerate;
-    float fps = io->Framerate;
-    ImGui::Text(u8"MOUSE POS:\t(%.1f,%.1f)", m_vec.x, m_vec.y);
-    ImGui::Text(u8"TIME:\t%.1fsec; FRAME:\t%if", ImGui::GetTime(), ImGui::GetFrameCount());
-    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", ms, fps);
-
-
-    if (debug_stats::fps_point == 500)
-        debug_stats::fps_point = 0;
-
-    debug_stats::fps_samples[debug_stats::fps_point] = fps;
-    debug_stats::fps_point++;
-
-    // ‚˚˜ËÒÎˇÂÏ Ò‡Ï˚È ·ÓÎ¸¯ÓÈ ÙÔÒ ËÁ Ì‡¯Â„Ó ÒÔËÒÍ‡
-    float max_fps = 0.0f;
-    for (auto sample : debug_stats::fps_samples)
-        if (sample > max_fps)
-            max_fps = sample;
-
-    ImGui::PlotLines("FPS", debug_stats::fps_samples, 500, 0, NULL, 0.0, max_fps * 2.0, ImVec2(0.0, 70.0));
-    
-    //ImGui::ShowDemoWindow();
-
-    ImGui::End();
-    ImGui::PopFont();
-}
 void gameloops::drawMainMenu(float& deltatime) {
     drawBackgroundSpaceCircleEffect(deltatime);
 
@@ -130,18 +85,18 @@ void gameloops::drawMainMenu(float& deltatime) {
 
     ImGui::SetNextWindowSize(ImVec2(screen_weight / 3.84f, screen_height / 2.16f));
     ImGui::SetNextWindowPos(ImVec2(screen_weight / 2 - (screen_weight / 3.84f) / 2, screen_height / 2 - (screen_height / 2.16f) / 5));
-    ImGui::Begin(u8"mMain", NULL, UI_FLAG_CLEAR);//
+    ImGui::Begin("mMain", NULL, UI_FLAG_CLEAR);//s
 
     ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
-    if (ImGui::Button(u8"¬ıÓ‰", ImVec2(250, 50))) {
-        current_ui = SCENE::connection_process_game_server;
+    if (ImGui::Button(utils::encoding::to_utf8(L"¬ıÓ‰").c_str(), ImVec2(250, 50))) {
+        current_scene = SCENE::connection_process_game_server;
     }
     ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
-    if (ImGui::Button(u8"Õ‡ÒÚÓÈÍË", ImVec2(250, 50))) {
-        current_ui = SCENE::main_settings;
+    if (ImGui::Button(utils::encoding::to_utf8(L"Õ‡ÒÚÓÈÍË").c_str(), ImVec2(250, 50))) {
+        current_scene = SCENE::main_menu_settings;
     }
     ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - 125);
-    if (ImGui::Button(u8"¬˚ıÓ‰", ImVec2(250, 50))) {
+    if (ImGui::Button(utils::encoding::to_utf8(L"¬˚ıÓ‰").c_str(), ImVec2(250, 50))) {
         exit(0);
     }
 
@@ -158,19 +113,46 @@ void gameloops::drawMainSettings(float& deltatime) {
     ImGui::SetNextWindowPos(ImVec2(screen_weight / 2 - (screen_weight / 3.84f) / 2, screen_height / 2 - (screen_height / 2.16f) / 2));
     ImGui::Begin("settings", NULL, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar);
 
-    ImGui::Text(u8"Õ‡ÒÚÓÈÍË");
+    ImGui::SetCursorPosX(screen_weight / 3.84f / 2 - (ImGui::CalcTextSize(utils::encoding::to_utf8(L"Õ‡ÒÚÓÈÍË").c_str()).x) / 2);
+    ImGui::Text(utils::encoding::to_utf8(L"Õ‡ÒÚÓÈÍË").c_str());
     ImGui::Separator();
-    //if (ImGui::Checkbox("VSYNC", &m_settings::vsync)) {
-    //    window->setVerticalSyncEnabled(m_settings::vsync);
-    //}
+
+    ImGui::SetCursorPos(ImVec2(screen_weight / 3.84f - 108, screen_height / 2.16f - 40));
+    if (ImGui::Button(utils::encoding::to_utf8(L"Õ‡Á‡‰").c_str(), ImVec2(100, 30))) {
+        current_scene = SCENE::main_menu;
+    }
 
     ImGui::End();
     ImGui::PopFont();
 }
 void gameloops::drawConnectionProcessGameServer(float& deltatime) {
     drawBackgroundSpaceFlyEffect(deltatime);
+
+    wstring connect_text = L"»ƒ≈“ œŒƒ Àﬁ◊≈Õ»≈";
+
+    if(m_network::failed_count > 0)
+        connect_text += format(L" ({}) ", m_network::failed_count);
+
+    float text_size = ImGui::CalcTextSize(utils::encoding::to_utf8(connect_text).c_str()).x / 2;
+    float coef_point = clamp(abs(cosf(ImGui::GetTime())), 0.0f, 1.0f);
+
+    if (coef_point >= 0.7 && coef_point <= 1.0) {
+        connect_text += L"...";
+    }
+    else if (coef_point > 0.3 && coef_point < 0.7) {
+        connect_text += L"..";
+    }
+    else if (coef_point >= 0.0 && coef_point <= 0.3) {
+        connect_text += L".";
+    }
+
+    ImGui::Begin("connection_progress", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
+    ImGui::SetWindowPos(ImVec2(screen_weight / 2 - text_size, screen_height / 2));
+    ImGui::Text(utils::encoding::to_utf8(connect_text).c_str());
+    ImGui::End();
+
 }
-void gameloops::drawGameServer(float& deltatime) {
+void gameloops::drawGameWorld(float& deltatime) {
     drawRandomComets(deltatime);
 
     // ÔË¯ÂÏ ˜ÚÓ ÓÚËÒÓ‚‡Ú¸
@@ -185,6 +167,51 @@ void gameloops::drawGameServer(float& deltatime) {
     // Ó˜ËÒÚÍ‡ ÚÓ„Ó ˜ÚÓ Ì‡‰Ó ·˚ÎÓ ÓÚËÒÓ‚‡Ú¸
     clean_all_tiles();
 
+}
+
+void gameloops::drawDebug() {
+    ImGui::PushFont(getStandartFont());
+
+    ImGui::Begin(utils::encoding::to_utf8(L"ƒÂ·‡„ »Õ‘Œ").c_str(), NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
+    ImGui::SetWindowPos(ImVec2(0.0, 0.0));
+    //static float f = 0.0f;
+    //ImGui::SliderFloat("MAX FPS", &f, 0.0f, 144.0f);
+    //window->setFramerateLimit((int)f);
+
+
+    ImGui::Text("CPU:\t%s", utils::computer::getCpu().c_str());
+    ImGui::Text("GPU:\t%s", utils::encoding::to_utf8(utils::computer::getGpu()).c_str());
+    DWORD max, used;
+    utils::computer::getRAM(max, used);
+    ImGui::Text("RAM:\t%i MB / %i%s %s", max, used, "%", utils::encoding::to_utf8(L"Á‡ÛÊÂÌÓ").c_str());
+    ImVec2 m_vec = io->MousePos;
+
+
+    float ms = 1000.0f / io->Framerate;
+    float fps = io->Framerate;
+    ImGui::Text("MOUSE POS:\t(%.1f,%.1f)", m_vec.x, m_vec.y);
+    ImGui::Text("TIME:\t%.1fsec; FRAME:\t%if", ImGui::GetTime(), ImGui::GetFrameCount());
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", ms, fps);
+
+
+    if (debug_stats::fps_point == 500)
+        debug_stats::fps_point = 0;
+
+    debug_stats::fps_samples[debug_stats::fps_point] = fps;
+    debug_stats::fps_point++;
+
+    // ‚˚˜ËÒÎˇÂÏ Ò‡Ï˚È ·ÓÎ¸¯ÓÈ ÙÔÒ ËÁ Ì‡¯Â„Ó ÒÔËÒÍ‡
+    float max_fps = 0.0f;
+    for (auto sample : debug_stats::fps_samples)
+        if (sample > max_fps)
+            max_fps = sample;
+
+    ImGui::PlotLines("FPS", debug_stats::fps_samples, 500, 0, NULL, 0.0, max_fps * 2.0, ImVec2(0.0, 70.0));
+
+    //ImGui::ShowDemoWindow();
+
+    ImGui::End();
+    ImGui::PopFont();
 }
 void gameloops::drawRandomComets(float& deltatime) {
     // TODO: ÍÓÏÂÌÚ˚ ÔÓÎÂÚ‡˛˘ËÂ Ì‡ ÙÓÌÂ, ˜ËÒÚÓ BackGround ‚ ÍÓÒÏÓÒÂ
@@ -240,33 +267,34 @@ void gameloops::drawBackgroundSpaceFlyEffect(float& deltatime) {
 
     sf::View view = window->getDefaultView();
     view.zoom(0.5f - cosf(ImGui::GetTime()) * 0.02f);
-
-    string connect_text = u8"»ƒ≈“ œŒƒ Àﬁ◊≈Õ»≈";
-    float text_size = ImGui::CalcTextSize(connect_text.c_str()).x / 2;
-    float coef_point = clamp(abs(cosf(ImGui::GetTime())), 0.0f, 1.0f);
-    
-    if (coef_point >= 0.7 && coef_point <= 1.0) {
-        connect_text += "...";
-    } else if (coef_point > 0.3 && coef_point < 0.7) {
-        connect_text += "..";
-    } else if (coef_point >= 0.0 && coef_point <= 0.3) {
-        connect_text += ".";
-    }
-
-    ImGui::Begin(u8"connection_progress", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
-    ImGui::SetWindowPos(ImVec2(screen_weight / 2 - text_size, screen_height / 2) );
-    ImGui::Text(connect_text.c_str(), CLIENT_VERSION, VERSION_STAGE);
-    ImGui::End();
-
     window->setView(view);
     window->draw(m_settings::space_points);
 }
-
 void gameloops::drawCredits() {
-    ImGui::Begin(u8"credits", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
+    ImGui::Begin("credits", NULL, ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDecoration);
     ImGui::SetWindowPos(ImVec2(1, screen_height - 30));
-    ImGui::Text(u8"¬ –¿«–¿¡Œ“ ≈ %s %s", CLIENT_VERSION, VERSION_STAGE);
+    ImGui::Text("%s %s %s", utils::encoding::to_utf8(L"¬ –¿«–¿¡Œ“ ≈").c_str(),  CLIENT_VERSION, VERSION_STAGE);
     ImGui::End();
+}
+
+void gameloops::connect_to_server() {
+    if (connect_timer.getElapsedTime().asSeconds() < m_network::connect_every_sec)
+        return;
+
+    connect_timer.restart();
+
+    if (tcp.connect(IpAddress("localhost"), DEFAULT_TCP_SERVER_PORT) != Socket::Done) {
+        m_network::failed_count++;
+        if (m_network::failed_count >= m_network::failed_max_count) {
+            m_network::failed_count = 0;
+            current_scene = SCENE::main_menu;
+        }
+        return;
+    }
+    
+    tcp_status = Socket::Done;
+    current_scene = SCENE::game_world;
+    cout << "connected to server" << endl;
 }
 
 // Œ—ÕŒ¬Õ¿ﬂ ‘”Õ÷»ﬂ √ƒ≈ œ–Œ»—’Œƒ»“ Œ“–»—Œ¬ ¿ ¬—≈… √–¿‘» »
@@ -274,21 +302,32 @@ void gameloops::render(float& deltatime) {
     if (m_settings::is_debug)
         drawDebug();
 
-    switch (current_ui) {
+    switch (current_scene) {
     case SCENE::main_menu:
         drawMainMenu(deltatime);
         break;
-    case SCENE::main_settings:
+    case SCENE::main_menu_settings:
         drawMainSettings(deltatime);
         break;
     case SCENE::connection_process_game_server:
         drawConnectionProcessGameServer(deltatime);
+        //connect_to_server(); // Í‡Ê‰˚Â 5 ÒÂÍ Ë‰ÂÚ ÔÓÔ˚ÚÍ‡ ÔÓ‰ÍÎ˛˜ÂÌËˇ
+        break;
+    case SCENE::game_world:
+        drawGameWorld(deltatime);
         break;
     }
 
     drawCredits(); 
 }
+void gameloops::network() {
+    while (window->isOpen()) {
+        // œŒœ€“ ¿ œŒƒ Àﬁ◊≈Õ»ﬂ
+        if (current_scene == SCENE::connection_process_game_server && tcp_status != Socket::Done)
+            connect_to_server();
 
+    }
+}
 // Œ—ÕŒ¬Õ¿ﬂ ‘”Õ ÷»ﬂ ƒÀﬂ Œ¡–¿¡Œ“ » ¬—≈’  À¿¬»ÿ
 void gameloops::keyboard(float& deltatime) {
     if (ImGui::IsKeyReleased(ImGuiKey_F1))
@@ -316,10 +355,7 @@ void gameloops::keyboard(float& deltatime) {
 
     main_player->get_vel()->x = clamp(main_player->get_vel()->x, -MAX_VELOCITY, MAX_VELOCITY);
     main_player->get_vel()->y = clamp(main_player->get_vel()->y, -MAX_VELOCITY, MAX_VELOCITY);
-
-    //cout << main_player->get_vel()->x << " " << main_player->get_vel()->y << endl;
-    //delta_pos = v2f(clamp(delta_pos.x, -ONE, ONE), clamp(delta_pos.y, -ONE, ONE));
-
+    
     v2f delta_pos = main_player->get_pos() + *main_player->get_vel();
 
     main_player->set_pos(delta_pos);

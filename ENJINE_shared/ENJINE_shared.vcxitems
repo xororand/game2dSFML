@@ -15,10 +15,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)define.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)nodes\character_node.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)network\playerPeer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)nodes\characterNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)nodes\node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tilemap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\sha256.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\vecmath.h" />
   </ItemGroup>
@@ -29,10 +31,12 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_draw.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_tables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_widgets.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)nodes\character_node.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)network\playerPeer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)nodes\characterNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)nodes\node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tile.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tilemap.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)utils\sha256.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\utils.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)utils\vecmath.cpp" />
   </ItemGroup>

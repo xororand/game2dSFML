@@ -1,5 +1,4 @@
-#define FIXED_DELTA (1.0f / 60.0f)
-
+#include "sha256.h"
 
 #include "Windows.h"
 #include <string>
@@ -15,6 +14,14 @@ public:
         static wstring to_wide(const string& str);
 	};
 	
+    struct hashing {
+        static string sha256(string text);
+    };
+
+    struct strings {
+        static string get_rand_string(int c_count);
+    };
+
 	struct computer {
         static string getCpu();
         static wstring getGpu();

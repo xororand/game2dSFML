@@ -2,19 +2,26 @@
 #include "game/game.h"
 
 int main() {
+    
     setlocale(LC_ALL, "RUS");
     IMGUI_CHECKVERSION();
 
     Clock deltaclock;
     gameloops loops;
 
+    sf::Thread net_thread(&gameloops::network, &loops);
+      
     RenderWindow window(sf::VideoMode(loops.getScreenWidth(), loops.getScreenHeight()), "2D GAME", Style::Fullscreen);
     window.setFramerateLimit(144);
     window.setVerticalSyncEnabled(true);
-
+    
     ImGui::SFML::Init(window);
+
     loops.setMainWindow(&window);
     loops.setImguiIO(&ImGui::GetIO());
+
+    // ---- SET ALL THREADS ---- //
+    net_thread.launch();
 
     ImGui::GetIO().Fonts->Clear();
 
@@ -24,7 +31,7 @@ int main() {
     loops.setStandartFont(font);
 
     ImGui::SFML::UpdateFontTexture();
-
+    
     Clock deltaClock;
     while (window.isOpen()) {
         sf::Event event;
@@ -47,8 +54,9 @@ int main() {
         window.clear(Color(10.0, 10.0, 10.0));
 
         loops.render(deltaTime);
+        
         loops.keyboard(deltaTime);
-
+        
         ImGui::SFML::UpdateFontTexture();
         ImGui::SFML::Render(window);
         window.display();
