@@ -21,7 +21,7 @@ int main() {
     loops.setImguiIO(&ImGui::GetIO());
 
     // ---- SET ALL THREADS ---- //
-    net_thread.launch();
+    net_thread.launch(); // NETWORK THREAD | ЗАПУСКАЕТСЯ ОТДЕЛЬНО ОТ ПОТОКА ОТРИСОВКИ ОКНА
 
     ImGui::GetIO().Fonts->Clear();
 

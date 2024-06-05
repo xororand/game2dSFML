@@ -6,7 +6,7 @@
 class tilemap : public Drawable, public Transformable {
 public:
     tilemap(Texture* tileset, v2u tileSize);
-    void update(vector<tile>& tiles);
+    void update(deque<tile>& tiles);
     void clean();
 private:
     virtual void draw(RenderTarget& target, RenderStates states) const;

@@ -15,7 +15,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(MSBuildThisFileDirectory)define.h" />
-    <ClInclude Include="$(MSBuildThisFileDirectory)network\playerPeer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)network\netcommands.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)network\player\Peer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)network\player\playerPeer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)network\player\serverPlayerPeer.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)nodes\characterNode.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)nodes\node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tile.h" />
@@ -31,7 +34,9 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_draw.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_tables.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)imgui\imgui_widgets.cpp" />
-    <ClCompile Include="$(MSBuildThisFileDirectory)network\playerPeer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)network\player\Peer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)network\player\playerPeer.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)network\player\serverPlayerPeer.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)nodes\characterNode.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)nodes\node.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)tilemap\tile.cpp" />

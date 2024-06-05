@@ -5,6 +5,7 @@
 #include "tilemap/tilemap.h"
 #include "nodes/node.h"
 #include "nodes/characterNode.h"
+#include "network/player/playerPeer.h"
 
 class gameloops {
 public:
@@ -65,12 +66,12 @@ private:
 	Vector2f toview_center = Vector2f(0.0f, 0.0f);
 	int screen_weight, screen_height;
 
-	characterNode* main_player;
-	vector<characterNode*> characters;
+	playerPeer* m_peer;
+	deque<playerPeer*> peers;
 
 	struct render_system {
 		static inline Texture atlas1;
-		static inline vector<tile> tiles;
+		static inline deque<tile> tiles;
 		static inline tilemap _tilemap = tilemap(&atlas1, Vector2u(64, 64));;
 	};
 
@@ -89,6 +90,7 @@ private:
 	void drawCredits();
 
 	void connect_to_server();
-
+	bool check_connection();
+	void receive_packets();
 	
 };

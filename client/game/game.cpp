@@ -23,15 +23,16 @@ void gameloops::setScreenHeight(float h) {
 }
 
 void gameloops::write2draw_all_characters() {
-    for (characterNode* c : characters) {
-        if (c->is_main()) {
+    for (auto c : peers) {
+        characterNode* cd = c->get_character_node();
+        if (cd->is_main()) {
             sf::View view = window->getDefaultView();
-            view.setCenter(c->get_pos());
+            view.setCenter(cd->get_pos());
 
             window->setView(view);
         }
         // çàïèñü íà îòğèñîâêó ïåğñîíàæà
-        render_system::tiles.push_back(*c->get_tile());
+        render_system::tiles.push_back(*cd->get_tile());
     }
 }
 void gameloops::clean_all_tiles() {
@@ -52,17 +53,17 @@ gameloops::gameloops() {
     render_system::_tilemap = tilemap(&render_system::atlas1, Vector2u(64, 64));
 
     // çàïèñü ãëàâíîãî ïåğñîíàæà
-    main_player = new characterNode(v2f(0.0, 0.0));
-    main_player->is_main(true);
-    main_player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
-    main_player->get_tile()->set_texture_id(1);
+    //main_player = new playerPeer(v2f(0.0, 0.0));
+    //main_player->is_main(true);
+    //main_player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
+    //main_player->get_tile()->set_texture_id(1);
 
-    characterNode* player = new characterNode(v2f(0.0, 0.0));
-    player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
-    player->get_tile()->set_texture_id(1);
+    //characterNode* player = new characterNode(v2f(0.0, 0.0));
+    //player->set_pos(v2f(screen_weight / 2.0, screen_height / 2.0));
+    //player->get_tile()->set_texture_id(1);
 
-    characters.push_back(main_player);
-    characters.push_back(player);
+    //characters.push_back(main_player);
+    //characters.push_back(player);
 
 
     m_settings::space_points = VertexArray(Points, m_settings::space_points_count);
@@ -296,6 +297,21 @@ void gameloops::connect_to_server() {
     current_scene = SCENE::game_world;
     cout << "connected to server" << endl;
 }
+// Âåğíåò True åñëè âñ¸ ãóä
+bool gameloops::check_connection() {
+    // TODO: ïğîâåğêà íà äèñêîííåêò è òä
+    return true;
+}
+void gameloops::receive_packets() {
+    Packet p;
+    tcp.receive(p);
+    
+    std::string s(static_cast<const char*>(p.getData()), p.getDataSize());
+
+    //TODO: Îáğàáîòêà çàïğîñîâ îò ñåğâåğà â âèäå JSON (ÏÎÄÊËŞ×È ËÈÁÓ ÅÁËÀÍ ÒÓÏÎÉ)
+
+    cout << "packet: " << s << endl;
+}
 
 // ÎÑÍÎÂÍÀß ÔÓÍÖÈß ÃÄÅ ÏĞÎÈÑÕÎÄÈÒ ÎÒĞÈÑÎÂÊÀ ÂÑÅÉ ÃĞÀÔÈÊÈ
 void gameloops::render(float& deltatime) {
@@ -320,12 +336,20 @@ void gameloops::render(float& deltatime) {
 
     drawCredits(); 
 }
+
+
 void gameloops::network() {
     while (window->isOpen()) {
         // ÏÎÏÛÒÊÀ ÏÎÄÊËŞ×ÅÍÈß
-        if (current_scene == SCENE::connection_process_game_server && tcp_status != Socket::Done)
+        if (current_scene == SCENE::connection_process_game_server && tcp_status != Socket::Done) {
             connect_to_server();
+            continue;
+        }
 
+        if (!check_connection()) 
+            continue;
+
+        receive_packets();
     }
 }
 // ÎÑÍÎÂÍÀß ÔÓÍÊÖÈß ÄËß ÎÁĞÀÁÎÒÊÈ ÂÑÅÕ ÊËÀÂÈØ
@@ -333,30 +357,34 @@ void gameloops::keyboard(float& deltatime) {
     if (ImGui::IsKeyReleased(ImGuiKey_F1))
         m_settings::is_debug = !m_settings::is_debug;
 
-    main_player->get_vel()->x *= ANTI_VELOCITY;
-    main_player->get_vel()->y *= ANTI_VELOCITY;
+    if (current_scene == SCENE::connection_process_game_server && tcp_status == Socket::Done) {
+        characterNode* p_node = m_peer->get_character_node();
 
-    if (ImGui::IsKeyDown(ImGuiKey_W)) {
-        main_player->get_vel()->y += -0.01;
-        main_player->get_tile()->set_texture_id(4);
-    } 
-    if (ImGui::IsKeyDown(ImGuiKey_S)) {
-        main_player->get_vel()->y += 0.01;
-        main_player->get_tile()->set_texture_id(1);
-    } 
-    if (ImGui::IsKeyDown(ImGuiKey_D)) {
-        main_player->get_vel()->x += 0.01;    
-        main_player->get_tile()->set_texture_id(2);
-    } 
-    if (ImGui::IsKeyDown(ImGuiKey_A)) {
-        main_player->get_vel()->x += -0.01;
-        main_player->get_tile()->set_texture_id(3);
+        p_node->get_vel()->x *= ANTI_VELOCITY;
+        p_node->get_vel()->y *= ANTI_VELOCITY;
+
+        if (ImGui::IsKeyDown(ImGuiKey_W)) {
+            p_node->get_vel()->y += -0.01;
+            p_node->get_tile()->set_texture_id(4);
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_S)) {
+            p_node->get_vel()->y += 0.01;
+            p_node->get_tile()->set_texture_id(1);
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_D)) {
+            p_node->get_vel()->x += 0.01;
+            p_node->get_tile()->set_texture_id(2);
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_A)) {
+            p_node->get_vel()->x += -0.01;
+            p_node->get_tile()->set_texture_id(3);
+        }
+
+        p_node->get_vel()->x = clamp(p_node->get_vel()->x, -MAX_VELOCITY, MAX_VELOCITY);
+        p_node->get_vel()->y = clamp(p_node->get_vel()->y, -MAX_VELOCITY, MAX_VELOCITY);
+
+        v2f delta_pos = p_node->get_pos() + *p_node->get_vel();
+
+        p_node->set_pos(delta_pos);
     }
-
-    main_player->get_vel()->x = clamp(main_player->get_vel()->x, -MAX_VELOCITY, MAX_VELOCITY);
-    main_player->get_vel()->y = clamp(main_player->get_vel()->y, -MAX_VELOCITY, MAX_VELOCITY);
-    
-    v2f delta_pos = main_player->get_pos() + *main_player->get_vel();
-
-    main_player->set_pos(delta_pos);
 }
