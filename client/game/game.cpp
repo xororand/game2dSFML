@@ -190,6 +190,8 @@ void gameloops::drawDebug() {
 
     float ms = 1000.0f / io->Framerate;
     float fps = io->Framerate;
+
+    ImGui::Text("PLAYER POS:\t(\t%.1f,\t%.1f\t)", m_peer->get_character_node()->get_pos().x, m_peer->get_character_node()->get_pos().y);
     ImGui::Text("MOUSE POS:\t(%.1f,%.1f)", m_vec.x, m_vec.y);
     ImGui::Text("TIME:\t%.1fsec; FRAME:\t%if", ImGui::GetTime(), ImGui::GetFrameCount());
     ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", ms, fps);
@@ -278,6 +280,25 @@ void gameloops::drawCredits() {
     ImGui::End();
 }
 
+void gameloops::create_player(string public_hash, string private_hash, v2f pos, bool is_main) {
+    playerPeer* pp = new playerPeer();
+
+    
+
+    characterNode* cn = new characterNode();
+    cn->is_main(is_main);
+    cn->set_pos(pos);
+    cn->get_tile()->set_texture_id(1);
+
+    pp->set_character_node(cn);
+    pp->set_public_hash(public_hash);
+    pp->set_private_hash(private_hash);
+    pp->set_timestamp(time(0));
+
+    if (is_main) m_peer = pp; // После заполения данных вносим наш пир как основной, если сделать ДО, то ты пойдешь нахуй еблан при обработке keyboard
+
+    peers.push_back(pp);
+}
 void gameloops::connect_to_server() {
     if (connect_timer.getElapsedTime().asSeconds() < m_network::connect_every_sec)
         return;
@@ -300,17 +321,49 @@ void gameloops::connect_to_server() {
 // Вернет True если всё гуд
 bool gameloops::check_connection() {
     // TODO: проверка на дисконнект и тд
+    if (current_scene != SCENE::game_world) return false;
+
+    switch (tcp_status) {
+        case Socket::Done:
+            break;
+        case Socket::Disconnected:
+            current_scene = SCENE::main_menu;
+            return false;
+            break;
+    }
     return true;
 }
 void gameloops::receive_packets() {
     Packet p;
-    tcp.receive(p);
+    tcp_status = tcp.receive(p);
     
-    std::string s(static_cast<const char*>(p.getData()), p.getDataSize());
+    if (p.getDataSize() <= 0) return; // проверка на говеный пакет
+
+    std::string json_string(static_cast<const char*>(p.getData()), p.getDataSize());
+    
+    wcout << L"packet: " << utils::encoding::to_wide(json_string) << endl;
 
     //TODO: Обработка запросов от сервера в виде JSON (ПОДКЛЮЧИ ЛИБУ ЕБЛАН ТУПОЙ)
-
-    cout << "packet: " << s << endl;
+    try {
+        json json_parsed = json::parse(utils::encoding::to_wide(json_string));
+        
+        switch ((int)json_parsed["c"]) {
+        case (int)command::CREATE_PLAYER:
+            create_player(
+                json_parsed["public_hash"], 
+                json_parsed["private_hash"], 
+                v2f(json_parsed["pos"][0], 
+                    json_parsed["pos"][1]),
+                json_parsed["scc"]
+            );
+            break;
+        case (int)command::SEND_CHAT_MSG:
+            break;
+        }
+    }
+    catch (...) {
+        wcout << L"ERROR JSON PARSING: " << utils::encoding::to_wide(json_string) << endl;
+    }
 }
 
 // ОСНОВНАЯ ФУНЦИЯ ГДЕ ПРОИСХОДИТ ОТРИСОВКА ВСЕЙ ГРАФИКИ
@@ -337,7 +390,7 @@ void gameloops::render(float& deltatime) {
     drawCredits(); 
 }
 
-
+// ОБРАБОТКА СЕТИ В ОТДЕЛЬНОМ ПОТОКЕ
 void gameloops::network() {
     while (window->isOpen()) {
         // ПОПЫТКА ПОДКЛЮЧЕНИЯ
@@ -346,18 +399,21 @@ void gameloops::network() {
             continue;
         }
 
-        if (!check_connection()) 
-            continue;
-
+        //if (!check_connection()) {
+        //    Sleep(100);
+        //    continue;
+        //}
         receive_packets();
+        Sleep(100);
     }
 }
+
 // ОСНОВНАЯ ФУНКЦИЯ ДЛЯ ОБРАБОТКИ ВСЕХ КЛАВИШ
 void gameloops::keyboard(float& deltatime) {
     if (ImGui::IsKeyReleased(ImGuiKey_F1))
         m_settings::is_debug = !m_settings::is_debug;
 
-    if (current_scene == SCENE::connection_process_game_server && tcp_status == Socket::Done) {
+    if (current_scene == SCENE::game_world && tcp_status == Socket::Done && m_peer != NULL) {
         characterNode* p_node = m_peer->get_character_node();
 
         p_node->get_vel()->x *= ANTI_VELOCITY;

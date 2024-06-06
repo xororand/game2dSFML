@@ -23,6 +23,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)nodes\node.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tile.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)tilemap\tilemap.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utils\json.hpp" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\sha256.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\utils.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)utils\vecmath.h" />

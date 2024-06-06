@@ -21,7 +21,6 @@
 #define DEFAULT_UDP_SERVER_PORT 7999
 #define CPU_THREADS_MAX_COUNT std::thread::hardware_concurrency()
 
-
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Network.hpp"
@@ -36,6 +35,7 @@
 
 using namespace sf;
 using namespace std;
+using json = nlohmann::json;
 using namespace std::filesystem;
 
 typedef Vector2f v2f;

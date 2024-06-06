@@ -16,7 +16,3 @@
 using namespace sf;
 using namespace std;
 using namespace std::filesystem;
-
-class client {
-
-};

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "json.hpp"
 #include "sha256.h"
 
 #include "Windows.h"

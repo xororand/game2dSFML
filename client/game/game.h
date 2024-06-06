@@ -17,11 +17,13 @@ public:
 	void setMainWindow(RenderWindow* window);
 	void setImguiIO(ImGuiIO* io);
 	void setStandartFont(ImFont* font);
+
 	ImFont* getStandartFont();
 	int getScreenWidth();
 	void setScreenWidth(float w);
 	int getScreenHeight();
 	void setScreenHeight(float h);
+
 	ImGuiIO* io;
 	
 private:
@@ -89,6 +91,7 @@ private:
 	void drawBackgroundSpaceFlyEffect(float& deltatime);
 	void drawCredits();
 
+	void create_player(string public_hash, string private_hash, v2f pos, bool is_main);
 	void connect_to_server();
 	bool check_connection();
 	void receive_packets();
