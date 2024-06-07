@@ -131,8 +131,8 @@ void gameloops::drawConnectionProcessGameServer(float& deltatime) {
 
     wstring connect_text = L"ИДЕТ ПОДКЛЮЧЕНИЕ";
 
-    if(m_network::failed_count > 0)
-        connect_text += format(L" ({}) ", m_network::failed_count);
+    if(m_network::tcp_failed_count > 0)
+        connect_text += format(L" ({}) ", m_network::tcp_failed_count);
 
     float text_size = ImGui::CalcTextSize(utils::encoding::to_utf8(connect_text).c_str()).x / 2;
     float coef_point = clamp(abs(cosf(ImGui::GetTime())), 0.0f, 1.0f);
@@ -300,23 +300,54 @@ void gameloops::create_player(string public_hash, string private_hash, v2f pos, 
     peers.push_back(pp);
 }
 void gameloops::connect_to_server() {
+    
+    //if (tcp_status == Socket::Done && udp_status != Socket::Done) {
+    //    if (udp_timer.getElapsedTime().asSeconds() >= m_network::udp_max_time_to_connect) {
+    //        // Не удалось соединиться по UDP с сервером за отведенное время
+    //        cout << "Не удалось соединиться по UDP с сервером за отведенное время" << endl;
+    //        tcp.disconnect();
+    //        tcp_status = Socket::Disconnected;
+    //        udp_status = Socket::Disconnected;
+    //        current_scene = SCENE::main_menu;
+    //    }
+    //    // Отправляем UDP пакет авторизации
+    //    udp_send(format(R"({{"c":{0},"private_hash":"{1}"}})",
+    //        (int)command::AUTH_UDP,
+    //        m_peer->get_private_hash()
+    //    ));
+
+    //    // принятие UDP пакета авторизации
+    //    IpAddress sender_ip;
+    //    unsigned short port;
+    //    json data = receive_udp(sender_ip, port);
+    //    if ((int)data["c"] != (int)command::AUTH_UDP) 
+    //        return; // ЕСЛИ ЭТО НЕ ПАКЕТ АВТОРИЗАЦИИ - СЕРВЕР ЧЕТ ШЛЕТ ХУЙНЮ
+
+    //    if(sender_ip != server_ip || port != tcp.getRemotePort()) return; // нас пытается наебать НЕсервер
+
+    //    // Авторизационный UDP пакет пришел от сервера
+    //    current_scene = SCENE::game_world;
+    //    udp_status = Socket::Done;
+    //    Sleep(10);
+    //}
+
     if (connect_timer.getElapsedTime().asSeconds() < m_network::connect_every_sec)
         return;
 
     connect_timer.restart();
 
-    if (tcp.connect(IpAddress("localhost"), DEFAULT_TCP_SERVER_PORT) != Socket::Done) {
-        m_network::failed_count++;
-        if (m_network::failed_count >= m_network::failed_max_count) {
-            m_network::failed_count = 0;
-            current_scene = SCENE::main_menu;
+    // Подключаем TCP
+    if (tcp_status != Socket::Done) {
+        if (tcp.connect(IpAddress(server_ip), DEFAULT_TCP_SERVER_PORT) != Socket::Done) {
+            m_network::tcp_failed_count++;
+            if (m_network::tcp_failed_count >= m_network::tcp_failed_max_count) {
+                m_network::tcp_failed_count = 0;
+                current_scene = SCENE::main_menu;
+            }
+            return;
         }
-        return;
+        else { cout << "Connected to Server's TCP" << endl; tcp_status = Socket::Done; server_ip = tcp.getRemoteAddress(); current_scene = SCENE::game_world; /*udp_timer.restart();*/ }
     }
-    
-    tcp_status = Socket::Done;
-    current_scene = SCENE::game_world;
-    cout << "connected to server" << endl;
 }
 // Вернет True если всё гуд
 bool gameloops::check_connection() {
@@ -333,7 +364,7 @@ bool gameloops::check_connection() {
     }
     return true;
 }
-void gameloops::receive_packets() {
+void gameloops::receive_tcp_packets() {
     Packet p;
     tcp_status = tcp.receive(p);
     
@@ -341,14 +372,15 @@ void gameloops::receive_packets() {
 
     std::string json_string(static_cast<const char*>(p.getData()), p.getDataSize());
     
-    wcout << L"packet: " << utils::encoding::to_wide(json_string) << endl;
+    if(is_console_debug)
+        wcout << L"packet: " << utils::encoding::to_wide(json_string) << endl;
 
-    //TODO: Обработка запросов от сервера в виде JSON (ПОДКЛЮЧИ ЛИБУ ЕБЛАН ТУПОЙ)
+    // Обработка запросов от сервера
     try {
         json json_parsed = json::parse(utils::encoding::to_wide(json_string));
         
-        switch ((int)json_parsed["c"]) {
-        case (int)command::CREATE_PLAYER:
+        switch ((int)json_parsed["c"]) { // ОБРАБОТКА КОМАНДЫ ОТ СЕРВЕРА
+        case (int)command::CREATE_PLAYER: 
             create_player(
                 json_parsed["public_hash"], 
                 json_parsed["private_hash"], 
@@ -365,7 +397,46 @@ void gameloops::receive_packets() {
         wcout << L"ERROR JSON PARSING: " << utils::encoding::to_wide(json_string) << endl;
     }
 }
+void gameloops::receive_udp_packets(){
+    IpAddress sender_ip;
+    unsigned short port;
 
+    json json_command = receive_udp(sender_ip, port);
+
+    if (sender_ip != tcp.getRemoteAddress() || json_command == NULL) return; // ПРОВЕРКА ЧТО ПАКЕТ ОТ СЕРВЕРА, В СЛУЧАЕ ЕСЛИ КРЫСА ХОЧЕТ НАМ ЧТО-ТО ПРИСЛАТЬ - НАХУЙ ЕЕ
+
+    cout << json_command << endl;
+    //switch ((int)json_command["c"]) {};
+}
+json gameloops::receive_udp(IpAddress& sender_ip, unsigned short& port) {
+    Packet p;
+
+    if (udp.receive(p, sender_ip, port) != Socket::Done) return NULL;
+
+    std::string json_string(static_cast<const char*>(p.getData()), p.getDataSize());
+
+    if (is_console_debug)
+        std::cout << "FROM SERVER: " << json_string << std::endl;
+
+    try {
+        return json::parse(utils::encoding::to_wide(json_string));
+    }
+    catch (...) {
+        if (is_console_debug)
+            wcout << L"ERROR JSON PARSING: " << utils::encoding::to_wide(json_string) << endl;
+        return NULL;
+    }
+    return NULL;
+}
+void gameloops::udp_send(string data) {
+    if (data.size() > UdpSocket::MaxDatagramSize) { cout << "UDP max packet size is detected!" << endl; return; }
+
+    Packet p;
+    p.append(data.c_str(), data.size());
+    udp.send(p, server_ip, DEFAULT_UDP_SERVER_PORT);
+    if (is_console_debug)
+        cout << "Packet sent: " << data << endl;
+}
 // ОСНОВНАЯ ФУНЦИЯ ГДЕ ПРОИСХОДИТ ОТРИСОВКА ВСЕЙ ГРАФИКИ
 void gameloops::render(float& deltatime) {
     if (m_settings::is_debug)
@@ -393,17 +464,13 @@ void gameloops::render(float& deltatime) {
 // ОБРАБОТКА СЕТИ В ОТДЕЛЬНОМ ПОТОКЕ
 void gameloops::network() {
     while (window->isOpen()) {
-        // ПОПЫТКА ПОДКЛЮЧЕНИЯ
         if (current_scene == SCENE::connection_process_game_server && tcp_status != Socket::Done) {
             connect_to_server();
             continue;
         }
 
-        //if (!check_connection()) {
-        //    Sleep(100);
-        //    continue;
-        //}
-        receive_packets();
+        receive_tcp_packets();
+        receive_udp_packets();
         Sleep(100);
     }
 }
@@ -414,7 +481,34 @@ void gameloops::keyboard(float& deltatime) {
         m_settings::is_debug = !m_settings::is_debug;
 
     if (current_scene == SCENE::game_world && tcp_status == Socket::Done && m_peer != NULL) {
-        characterNode* p_node = m_peer->get_character_node();
+        string wasd_str = "0000";
+        bool wasd = false;
+
+        if (ImGui::IsKeyDown(ImGuiKey_W)) {
+            wasd_str[0] = '1';
+            wasd = true;
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_A)) {
+            wasd_str[1] = '1';
+            wasd = true;
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_S)) {
+            wasd_str[2] = '1';
+            wasd = true;
+        }
+        if (ImGui::IsKeyDown(ImGuiKey_D)) {
+            wasd_str[3] = '1';
+            wasd = true;
+        }
+        if (wasd) {
+            udp_send(format(R"({{"c":{0},"private_hash":"{1}","wasd":"{2}"}})",
+                (int)command::MOVE_PLAYER_BY_WASD,
+                m_peer->get_private_hash(),
+                wasd_str
+            ));
+        }
+        // КОД СИМУЛЯЦИИ КОСМОСА НА СЕРВЕРЕ TODO: ПЕРЕНЕСТИ НА СЕРВЕР!
+        /*characterNode* p_node = m_peer->get_character_node();
 
         p_node->get_vel()->x *= ANTI_VELOCITY;
         p_node->get_vel()->y *= ANTI_VELOCITY;
@@ -441,6 +535,6 @@ void gameloops::keyboard(float& deltatime) {
 
         v2f delta_pos = p_node->get_pos() + *p_node->get_vel();
 
-        p_node->set_pos(delta_pos);
+        p_node->set_pos(delta_pos);*/
     }
 }

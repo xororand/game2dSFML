@@ -15,4 +15,3 @@ string playerPeer::get_player_name()			{ return p_name;		}
 string playerPeer::get_public_hash()			{ return public_hash;	}
 string playerPeer::get_private_hash()			{ return private_hash;	}
 int playerPeer::get_timestamp()					{ return timestamp;		}
-

@@ -1,4 +1,5 @@
 enum class command {
 	CREATE_PLAYER,
-	SEND_CHAT_MSG
+	SEND_CHAT_MSG,
+	MOVE_PLAYER_BY_WASD
 };

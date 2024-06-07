@@ -14,12 +14,15 @@
 class server {
 private:
 	bool m_is_started = false;
+	bool is_debug = true;
 	int tps = 30;
 
 	static inline int thread_count = 0;
 	vector<Thread*> threads;
 
 	TcpListener tcp_listener;
+	
+	UdpSocket udp_socket;
 
 	deque<serverPlayerPeer*> peers;
 public:
@@ -32,10 +35,11 @@ public:
 	
 	void sync_clients();
 
+	void udp_process_packets();
 	void tcp_new_connections();
 	void process_connected();
 
-	void add_thread(threadtype type);
+	void add_thread();
 	void start();
 	bool is_started();
 

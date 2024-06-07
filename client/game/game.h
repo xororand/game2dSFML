@@ -27,6 +27,7 @@ public:
 	ImGuiIO* io;
 	
 private:
+	bool is_console_debug = true;
 	enum class SCENE {
 		main_menu,
 		main_menu_settings,
@@ -44,14 +45,20 @@ private:
 		static inline bool is_debug = false;
 	};
 
+	IpAddress server_ip = "localhost";
+
 	Clock connect_timer;
+	//Clock udp_timer;
 	TcpSocket tcp;
+	UdpSocket udp;
 	Socket::Status tcp_status = Socket::Disconnected;
+	Socket::Status udp_status = Socket::Disconnected;
 
 	static struct m_network {
+		static inline float udp_max_time_to_connect = 10.0f;
 		static inline float connect_every_sec = 5.0f;
-		static inline int failed_max_count = 5;
-		static inline int failed_count = 0;
+		static inline int tcp_failed_max_count = 5;
+		static inline int tcp_failed_count = 0;
 
 	};
 
@@ -94,6 +101,9 @@ private:
 	void create_player(string public_hash, string private_hash, v2f pos, bool is_main);
 	void connect_to_server();
 	bool check_connection();
-	void receive_packets();
+	void receive_tcp_packets();
+	void receive_udp_packets();
+	json receive_udp(IpAddress& sender_ip, unsigned short& port);
+	void udp_send(string data);
 	
 };

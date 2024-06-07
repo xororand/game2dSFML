@@ -16,7 +16,7 @@ bool serverPlayerPeer::create_player_node(string public_hash, string private_has
 }
 
 bool serverPlayerPeer::send_chat_msg(string text) {
-	Packet* p= new Packet();
+	Packet* p = new Packet();
 	string command = format(R"({{"c":{0},"msg":"{1}"}})",
 		(int)command::SEND_CHAT_MSG,
 		text
